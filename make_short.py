@@ -60,6 +60,7 @@ Story requirements:
 - Must have a clear moment of realization ("that's when I knew")
 - Funny but relatable
 - Raw, conversational Reddit tone — like posting at 2am
+- PERFECT LOOP: The very last sentence must echo or directly callback to the HOOK text. The ending should make the viewer want to immediately rewatch from the beginning. Example: if HOOK is "I texted my boss instead of my girlfriend", the last line could be "And that's how one wrong text destroyed everything."
 
 Example themes:
 - Accidentally texting the wrong person something private
@@ -83,6 +84,7 @@ Story requirements:
 - Hook in the first sentence
 - A twist or reveal mid-story
 - Raw, conversational tone — like venting at 2am
+- PERFECT LOOP: The very last sentence must echo or directly callback to the HOOK text, closing the circle. Example: if HOOK is "My boyfriend had a secret second family", end with something like "And that's the day I found out I was the secret."
 
 Example themes:
 - Discovered my partner had a whole secret life
@@ -105,6 +107,7 @@ Story requirements:
 - Specific details that make it feel 100% real
 - A moment where the narrator was vindicated
 - Raw, conversational tone
+- PERFECT LOOP: The very last sentence must echo or directly callback to the HOOK text. Example: if HOOK is "I predicted the exact date it would happen", end with "Nobody believed me — until it happened exactly like I said."
 
 Example themes:
 - Predicted something impossible before it happened
@@ -127,6 +130,7 @@ Story requirements:
 - Clever and proportional revenge
 - End with the satisfying moment + reaction
 - Tone: smug satisfaction
+- PERFECT LOOP: The very last sentence must echo or directly callback to the HOOK text. Example: if HOOK is "I got my boss fired using his own words", end with "Turns out his own words were the only thing that could bring him down."
 
 Example themes:
 - A coworker stole credit for my work
@@ -149,6 +153,7 @@ Story requirements:
 - Build to a reveal that recontextualizes everything
 - Emotional and raw
 - End with how they feel now
+- PERFECT LOOP: The very last sentence must echo or directly callback to the HOOK text, creating a perfect circle. Example: if HOOK is "I've been living a lie for ten years", end with "Ten years later, I'm still living that lie."
 
 Example themes:
 - I accidentally caused a big event and never admitted it
@@ -549,11 +554,16 @@ def create_video(story: str, hook: str, title: str, subreddit: str,
     # Karartma
     dark = ColorClip(size=(W, H), color=(0, 0, 0), duration=dur).with_opacity(0.55)
 
-    # Hook overlay — ilk HOOK_DUR saniye, ortada büyük beyaz yazı
-    hook_arr = make_hook_overlay(hook, W, H)
-    hook_clip = (ImageClip(hook_arr, duration=HOOK_DUR)
-                 .with_start(0)
-                 .with_position((0, 0)))
+    # Hook overlay — ilk HOOK_DUR saniye + son 1.5 saniye (perfect loop)
+    hook_arr   = make_hook_overlay(hook, W, H)
+    hook_clip  = (ImageClip(hook_arr, duration=HOOK_DUR)
+                  .with_start(0)
+                  .with_position((0, 0)))
+    END_FADE   = 1.5
+    hook_end   = (ImageClip(hook_arr, duration=END_FADE)
+                  .with_start(max(0, dur - END_FADE))
+                  .with_position((0, 0))
+                  .crossfadein(END_FADE))
 
     # Reddit kartı — CARD_START saniyesinde çıkar, CARD_DUR saniye görünür
     card_arr = make_reddit_card(title, subreddit, W)
@@ -569,7 +579,7 @@ def create_video(story: str, hook: str, title: str, subreddit: str,
     subs = make_subtitle_clips(word_timings, W, H, dur)
 
     final = CompositeVideoClip(
-        [bg, dark, hook_clip, card] + subs,
+        [bg, dark, hook_clip, card] + subs + [hook_end],
         size=(W, H)
     ).with_audio(audio)
 
