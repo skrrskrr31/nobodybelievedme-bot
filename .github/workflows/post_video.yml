@@ -1,0 +1,42 @@
+name: Post Video
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 08:00 EST — sabah uyanma
+    - cron: "0 17 * * *"   # 13:00 EST — öğle molası
+    - cron: "0 2 * * *"    # 22:00 EST — yatmadan önce
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+          SECRET_JSON: ${{ secrets.SECRET_JSON }}
+        run: python make_short.py
+
+      - name: Commit used titles
+        run: |
+          git config user.name "nobody-bot"
+          git config user.email "nobody-bot@users.noreply.github.com"
+          git add kullanilan_hikayeler.json
+          git diff --staged --quiet || git commit -m "update used titles"
+          git push
