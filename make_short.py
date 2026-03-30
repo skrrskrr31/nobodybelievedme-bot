@@ -44,8 +44,8 @@ if _platform.system() == "Windows":
 
     _SEGUI    = r"C:\Windows\Fonts\seguisym.ttf"
 else:
-    FONT_PATH = "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf"
-    _ARIAL    = "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf"
+    FONT_PATH = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+    _ARIAL    = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
     _SEGUI    = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 ICON_PATH = str(Path(__file__).parent / "reddit_icon.png")
 MAX_USED         = 50
