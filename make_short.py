@@ -18,6 +18,7 @@ from moviepy import (
     VideoFileClip, AudioFileClip, ImageClip,
     CompositeVideoClip, ColorClip, concatenate_videoclips
 )
+from moviepy import vfx
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -39,7 +40,8 @@ SPEED            = "+50%"
 import platform as _platform
 if _platform.system() == "Windows":
     FONT_PATH = r"C:\Windows\Fonts\arialbd.ttf"
-    _ARIAL    = r"C:\Windows\Fonts\arial.ttf"
+    _ARIAL    = r"C:\Windows\Fonts\arial.ttf"
+
     _SEGUI    = r"C:\Windows\Fonts\seguisym.ttf"
 else:
     FONT_PATH = "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf"
@@ -572,7 +574,7 @@ def create_video(story: str, hook: str, title: str, subreddit: str,
     hook_end   = (ImageClip(hook_arr, duration=END_FADE)
                   .with_start(max(0, dur - END_FADE))
                   .with_position((0, 0))
-                  .crossfadein(END_FADE))
+                  .with_effects([vfx.FadeIn(END_FADE)]))
 
     # Reddit kartı — CARD_START saniyesinde çıkar, CARD_DUR saniye görünür
     card_arr = make_reddit_card(title, subreddit, W)
