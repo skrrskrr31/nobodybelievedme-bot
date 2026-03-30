@@ -21,7 +21,20 @@ jobs:
           python-version: "3.11"
 
       - name: Install system dependencies
-        run: sudo apt-get install -y ffmpeg
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y ffmpeg
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-msa-fonts boolean true" | sudo debconf-set-selections
+          sudo apt-get install -y ttf-mscorefonts-installer fonts-dejavu
+          fc-cache -f -v
+
+      - name: Download background videos
+        run: |
+          mkdir -p backgrounds
+          BASE="https://github.com/skrrskrr31/nobodybelievedme-bot/releases/download/v1.0-assets"
+          for i in 1 2 3 4; do
+            curl -L -o "backgrounds/video${i}.mp4" "${BASE}/video${i}.mp4"
+          done
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt

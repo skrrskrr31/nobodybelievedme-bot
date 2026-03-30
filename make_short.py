@@ -25,18 +25,27 @@ from googleapiclient.http import MediaFileUpload
 
 # ──────────────────────────────────────────
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+_BASE_DIR        = Path(__file__).parent
 BACKGROUND_VIDEOS = [
-    r"C:\Users\pc\OneDrive\Desktop\reddit video1.mp4",
-    r"C:\Users\pc\OneDrive\Desktop\reddit video2.mp4",
-    r"C:\Users\pc\OneDrive\Desktop\reddit video3.mp4",
-    r"C:\Users\pc\OneDrive\Desktop\reddit video 4.mp4",
+    str(_BASE_DIR / "backgrounds" / "video1.mp4"),
+    str(_BASE_DIR / "backgrounds" / "video2.mp4"),
+    str(_BASE_DIR / "backgrounds" / "video3.mp4"),
+    str(_BASE_DIR / "backgrounds" / "video4.mp4"),
 ]
 OUTPUT_DIR       = Path(__file__).parent / "output"
 USED_FILE        = Path(__file__).parent / "kullanilan_hikayeler.json"
 VOICE            = "en-US-JennyNeural"
 SPEED            = "+50%"
-FONT_PATH        = r"C:\Windows\Fonts\arialbd.ttf"
-ICON_PATH        = r"C:\Users\pc\OneDrive\Desktop\reddit.png"
+import platform as _platform
+if _platform.system() == "Windows":
+    FONT_PATH = r"C:\Windows\Fonts\arialbd.ttf"
+    _ARIAL    = r"C:\Windows\Fonts\arial.ttf"
+    _SEGUI    = r"C:\Windows\Fonts\seguisym.ttf"
+else:
+    FONT_PATH = "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf"
+    _ARIAL    = "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf"
+    _SEGUI    = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+ICON_PATH = str(Path(__file__).parent / "reddit_icon.png")
 MAX_USED         = 50
 _BASE            = Path(__file__).parent
 TOKEN_FILE       = _BASE / "token_nobody.json"
@@ -447,7 +456,7 @@ def make_reddit_card(title: str, subreddit: str, video_w: int) -> np.ndarray:
     try:
         font_title = ImageFont.truetype(FONT_PATH, 46)
         font_user  = ImageFont.truetype(FONT_PATH, 34)
-        font_small = ImageFont.truetype(r"C:\Windows\Fonts\arial.ttf", 28)
+        font_small = ImageFont.truetype(_ARIAL, 28)
     except Exception:
         font_title = font_user = font_small = ImageFont.load_default()
 
@@ -508,7 +517,7 @@ def make_reddit_card(title: str, subreddit: str, video_w: int) -> np.ndarray:
         title_y += line_h
 
     try:
-        font_icon = ImageFont.truetype(r"C:\Windows\Fonts\seguisym.ttf", 38)
+        font_icon = ImageFont.truetype(_SEGUI, 38)
     except Exception:
         font_icon = font_small
 
